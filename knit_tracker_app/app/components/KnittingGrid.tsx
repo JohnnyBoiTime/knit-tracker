@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import knitGrid from "./KnittingGrid.module.css"
 
 type Stitches = string
@@ -21,6 +21,8 @@ function createKnitProject(stitches: number, rows: number): Stitches[][] {
 /* The grid to store a persons knitting project progress/information */
 // stitches refers to the amount of cast-on stitches to start the project
 export default function KnittingGrid({stitches, nameOfProject} : KnittingGridProps) {
+    const [selectedStitches, setSelectedStitches] = useState<Set<string>>(new Set())
+    const [startSelecting, setStartSelecting] = useState<boolean>(false)
     const [knittingGrid, setKnittingGrid] = useState<Stitches[][]>(() => createKnitProject(stitches, 20)) // Creates the grid
     const [projectName, setProjectName] = useState<string>(() => nameOfProject) // Change project name
 
@@ -49,6 +51,36 @@ export default function KnittingGrid({stitches, nameOfProject} : KnittingGridPro
         })
     }
 
+    // User can select multiple stitches to go back if they want to,
+    // edit a row, etc.
+    function selectMultipleStitches(stitchRow: number, column: number) {
+
+        if (startSelecting == true) {
+            // We will create a key from the row + column
+            // since that creates a unique value for each stitch
+            const key = stitchRow.toString() + "," + column.toString()
+
+            // Select the new stitchess
+            setSelectedStitches(previousSelected => {
+                const newlySelectedStitches = new Set(previousSelected)
+                newlySelectedStitches.add(key)
+                return newlySelectedStitches
+            })
+        }
+    }
+
+    // Uses mouse movement to select multiple stitches
+    function toggleSelectingMultipleStitches(e: React.MouseEvent, row: number, column: number) {
+        setStartSelecting(true)
+    }
+
+       // Letting go untoggles
+    function untoggleSelectingMultipleStitches() {
+        setSelectedStitches(new Set())
+        setStartSelecting(false)
+    }
+
+
     // The users kniting grid
     return  (
         <div>
@@ -58,14 +90,16 @@ export default function KnittingGrid({stitches, nameOfProject} : KnittingGridPro
             </div>
             <table>
                 <tbody>
-                    {knittingGrid.map((row, rowNumber) => {
-                    return (
-                        <div className={knitGrid.stitchRowLayout}>
-                            <tr key={rowNumber}>
+                    {knittingGrid.map((row, rowNumber) => (
+                            <tr key={rowNumber} className={knitGrid.stitchRowLayout}>
                                 {/* Set a fixed width and height for row numbers, formatting breaks with numbers > 1000 */}
                                 <th className="w-8 h-6">{1 + rowNumber++}</th>
                                 {row.map((stitch, colIndex) => (
-                                <td className={knitGrid.stitch} key={colIndex}>
+                                <td className={selectedStitches.has((rowNumber -1).toString() + "," + colIndex.toString()) ? knitGrid.stitchSelected : knitGrid.stitch} 
+                                key={colIndex} 
+                                onMouseDown={() => setStartSelecting(true)}
+                                onMouseUp={untoggleSelectingMultipleStitches}
+                                onMouseMove={(e) => selectMultipleStitches(rowNumber - 1, colIndex)}>
                                     <input 
                                         className={knitGrid.stitchInput}
                                         value={stitch}
@@ -73,12 +107,13 @@ export default function KnittingGrid({stitches, nameOfProject} : KnittingGridPro
                                     />
                                 </td>
                                 ))}
+                            <td>
+                                <input className={knitGrid.additionalRowInfo}/>
+                            </td>
                             </tr>
-                            <input className={knitGrid.additionalRowInfo}>
-                            </input>
-                        </div>
+
                     )
-                    })}
+                    )}
                 </tbody>
             </table>
         </div>

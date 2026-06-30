@@ -8,6 +8,14 @@
     border: 1px solid #ccc;
 }
 
+.stitchSelected {
+    padding: 0;
+    font-weight: bold;
+    color: black;
+    border: 1px solid #ccc;
+    background-color: #FFE900;
+}
+
 .stitchInput {
     width: 24px;
     height: 24px;
@@ -20,13 +28,13 @@
 
 .stitchRowLayout {
     display: flex;
-    gap: 4px;
 }
 
 .additionalRowInfo {
     width: 100px;
     height: 24px;
-    padding: 0;
+    margin-left: 5px;
+    margin-top:2px;
     border: 1px solid #ccc;
     text-align: center;
     font-size: 12px;
