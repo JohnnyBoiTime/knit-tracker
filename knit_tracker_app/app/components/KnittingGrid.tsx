@@ -69,14 +69,9 @@ export default function KnittingGrid({stitches, nameOfProject} : KnittingGridPro
         }
     }
 
-    // Uses mouse movement to select multiple stitches
-    function toggleSelectingMultipleStitches(e: React.MouseEvent, row: number, column: number) {
-        setStartSelecting(true)
-    }
 
-       // Letting go untoggles
+    // Letting go untoggles selecting multiple stitches
     function untoggleSelectingMultipleStitches() {
-        setSelectedStitches(new Set())
         setStartSelecting(false)
     }
 
@@ -98,7 +93,14 @@ export default function KnittingGrid({stitches, nameOfProject} : KnittingGridPro
                                 <td className={selectedStitches.has((rowNumber -1).toString() + "," + colIndex.toString()) ? knitGrid.stitchSelected : knitGrid.stitch} 
                                 key={colIndex} 
                                 onMouseDown={() => setStartSelecting(true)}
-                                onMouseUp={untoggleSelectingMultipleStitches}
+                                onMouseUp={() => setStartSelecting(false)}
+                                onKeyDown={(event) => {
+
+                                    // Cancel the selection
+                                    if (event.key === "Escape") {
+                                        setSelectedStitches(new Set())
+                                    }
+                                }}
                                 onMouseMove={(e) => selectMultipleStitches(rowNumber - 1, colIndex)}>
                                     <input 
                                         className={knitGrid.stitchInput}
