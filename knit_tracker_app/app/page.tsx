@@ -1,11 +1,11 @@
 import Image from "next/image";
-import KnittingGrid from "./components/KnittingGrid"
+import KnittingProject from "./components/KnittingProject"
 
 export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <KnittingGrid stitches={20} nameOfProject={"Scarf"}/>
+        <KnittingProject stitches={20} nameOfProject={"Scarf"}/>
       </main>
     </div>
   );
